@@ -3,6 +3,29 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+class Movie {
+  final int movie_id;
+
+  const Movie({
+    required this.movie_id,
+  });
+
+  Map<int, dynamic> toMap() {
+    return {
+      movie_id: movie_id,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Movie{id: $movie_id}';
+  }
+
+  int getterId() {
+    return this.movie_id;
+  }
+}
+
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
@@ -76,20 +99,30 @@ class DatabaseHelper {
     return await db.query('favorites');
   }
 
-  Future<List<Map<String, dynamic>>> getFavoritesByUserId(int userId) async {
+  Future<List<Movie>> getFavoritesByUserId(int userId) async {
     Database db = await instance.database;
-    return await db
-        .query('favorites', columns: ['movie_id'], where: 'user_id = ?', whereArgs: [userId]);
+    final List<Map<String, dynamic>> maps = await db.query('favorites',
+        columns: ['movie_id'], where: 'user_id = ?', whereArgs: [userId]);
+    print('maps: $maps');
+    return List.generate(maps.length, (i) {
+      return Movie(
+        movie_id: maps[i]['movie_id'],
+      );
+    });
   }
-  
+
   Future<int> deleteFavorite(int userId, int movieId) async {
     Database db = await instance.database;
-    return await db.delete('favorites', where: 'user_id = ? AND movie_id = ?', whereArgs: [userId, movieId]);
+    return await db.delete('favorites',
+        where: 'user_id = ? AND movie_id = ?', whereArgs: [userId, movieId]);
   }
-  
-  Future<int> getFavoritesByUserIdMovieId(int userId, int MovieId) async{
+
+  Future<int> getFavoritesByUserIdMovieId(int userId, int MovieId) async {
     Database db = await instance.database;
-    return await db.query('favorites',where: 'user_id = ? AND movie_id = ?', whereArgs: [userId, MovieId]).then((value) => value.length);}
+    return await db.query('favorites',
+        where: 'user_id = ? AND movie_id = ?',
+        whereArgs: [userId, MovieId]).then((value) => value.length);
+  }
 
   Future<bool> checkFavorite(int userId, int movieId) async {
     Database db = await instance.database;
@@ -98,4 +131,3 @@ class DatabaseHelper {
     return result.isNotEmpty;
   }
 }
-

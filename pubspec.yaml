@@ -45,6 +45,7 @@ dependencies:
   http: ^0.13.4
   sqflite: ^2.2.8+4
   crypto: ^3.0.1
+  auto_reload: ^1.1.0
 
 dev_dependencies:
   flutter_test:
