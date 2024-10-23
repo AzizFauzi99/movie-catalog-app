@@ -1,4 +1,4 @@
-# flutter_project_akhir_1
+# Movie Catalog App
 
 A new Flutter project.
 
